@@ -1,0 +1,1398 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Monicaabelinda/TGS_KULIAH/blob/main/EDA_HandsOn.ipynb(%20Talent%20Batch%209%20-Monica%20Belinda)\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "metadata": {
+        "_uuid": "570fb89bb4f7838b1d0fdff70b2935790e5dbdbe",
+        "id": "Rvxi-izoU94G"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "<center>\n",
+        "<img src=\"https://habrastorage.org/files/fd4/502/43d/fd450243dd604b81b9713213a247aa20.jpg\">\n",
+        "    \n",
+        "## [mlcourse.ai](mlcourse.ai) – Open Machine Learning Course\n",
+        "\n",
+        "<center>Author: [Yury Kashnitskiy](http://yorko.github.io) <br>\n",
+        "Translated and edited by [Sergey Isaev](https://www.linkedin.com/in/isvforall/), [Artem Trunov](https://www.linkedin.com/in/datamove/), [Anastasia Manokhina](https://www.linkedin.com/in/anastasiamanokhina/), and [Yuanyuan Pao](https://www.linkedin.com/in/yuanyuanpao/) <br>All content is distributed under the [Creative Commons CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) license."
+      ]
+    },
+    {
+      "metadata": {
+        "_uuid": "998fc5f76227ab1df9460a7b05c508304b14b3a6",
+        "id": "Zm6TCpb8U94Z"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "# <center> Assignment #1 (demo)\n",
+        "## <center>  Exploratory data analysis with Pandas\n"
+      ]
+    },
+    {
+      "metadata": {
+        "_uuid": "89ef93231815456f4e0bc5dcc00b094aee800993",
+        "id": "qYh--mVaU94j"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "**In this task you should use Pandas to answer a few questions about the [Adult](https://archive.ics.uci.edu/ml/datasets/Adult) dataset. (You don't have to download the data – it's already here). Choose the answers in the [web-form](https://docs.google.com/forms/d/1uY7MpI2trKx6FLWZte0uVh3ULV4Cm_tDud0VDFGCOKg). This is a demo version of an assignment, so by submitting the form, you'll see a link to the solution .ipynb file.**"
+      ]
+    },
+    {
+      "metadata": {
+        "_uuid": "c322301ac858c748f8f80e63cf6f734fc70dde30",
+        "id": "SS-H1c4gU94n"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "Unique values of all features (for more information, please see the links above):\n",
+        "- `age`: continuous.\n",
+        "- `workclass`: Private, Self-emp-not-inc, Self-emp-inc, Federal-gov, Local-gov, State-gov, Without-pay, Never-worked.\n",
+        "- `fnlwgt`: continuous.\n",
+        "- `education`: Bachelors, Some-college, 11th, HS-grad, Prof-school, Assoc-acdm, Assoc-voc, 9th, 7th-8th, 12th, Masters, 1st-4th, 10th, Doctorate, 5th-6th, Preschool.\n",
+        "- `education-num`: continuous.\n",
+        "- `marital-status`: Married-civ-spouse, Divorced, Never-married, Separated, Widowed, Married-spouse-absent, Married-AF-spouse.\n",
+        "- `occupation`: Tech-support, Craft-repair, Other-service, Sales, Exec-managerial, Prof-specialty, Handlers-cleaners, Machine-op-inspct, Adm-clerical, Farming-fishing, Transport-moving, Priv-house-serv, Protective-serv, Armed-Forces.\n",
+        "- `relationship`: Wife, Own-child, Husband, Not-in-family, Other-relative, Unmarried.\n",
+        "- `race`: White, Asian-Pac-Islander, Amer-Indian-Eskimo, Other, Black.\n",
+        "- `sex`: Female, Male.\n",
+        "- `capital-gain`: continuous.\n",
+        "- `capital-loss`: continuous.\n",
+        "- `hours-per-week`: continuous.\n",
+        "- `native-country`: United-States, Cambodia, England, Puerto-Rico, Canada, Germany, Outlying-US(Guam-USVI-etc), India, Japan, Greece, South, China, Cuba, Iran, Honduras, Philippines, Italy, Poland, Jamaica, Vietnam, Mexico, Portugal, Ireland, France, Dominican-Republic, Laos, Ecuador, Taiwan, Haiti, Columbia, Hungary, Guatemala, Nicaragua, Scotland, Thailand, Yugoslavia, El-Salvador, Trinadad&Tobago, Peru, Hong, Holand-Netherlands.   \n",
+        "- `salary`: >50K,<=50K"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install pandas"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "c3oIifz-VpFm",
+        "outputId": "23053c6d-25fe-4c4c-ac14-bfd1e8e201f5"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: pandas in /usr/local/lib/python3.10/dist-packages (1.5.3)\n",
+            "Requirement already satisfied: python-dateutil>=2.8.1 in /usr/local/lib/python3.10/dist-packages (from pandas) (2.8.2)\n",
+            "Requirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.10/dist-packages (from pandas) (2023.3)\n",
+            "Requirement already satisfied: numpy>=1.21.0 in /usr/local/lib/python3.10/dist-packages (from pandas) (1.23.5)\n",
+            "Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.10/dist-packages (from python-dateutil>=2.8.1->pandas) (1.16.0)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "OlrXS-SZWJGA"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "collapsed": true,
+        "trusted": true,
+        "_uuid": "d3eb2411e23b7db11e4cbbb498a42752442a6f4c",
+        "id": "Mw_e63meU94x"
+      },
+      "cell_type": "code",
+      "source": [
+        "import pandas as pd\n",
+        "import matplotlib.pyplot as plt\n"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "_uuid": "c5119d1b8151029b4ff57735c4279b795ae492a2",
+        "collapsed": true,
+        "id": "tsdOKNS9U941",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 339
+        },
+        "outputId": "a4d195e2-3b3b-4e66-a985-9351e9cfdaa7"
+      },
+      "cell_type": "code",
+      "source": [
+        "data = pd.read_csv('EDA_Data.csv')"
+      ],
+      "execution_count": 12,
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "FileNotFoundError",
+          "evalue": "ignored",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mFileNotFoundError\u001b[0m                         Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-12-df22906c3ac3>\u001b[0m in \u001b[0;36m<cell line: 1>\u001b[0;34m()\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0mdata\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mpd\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mread_csv\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m'EDA_Data.csv'\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+            "\u001b[0;32m/usr/local/lib/python3.10/dist-packages/pandas/util/_decorators.py\u001b[0m in \u001b[0;36mwrapper\u001b[0;34m(*args, **kwargs)\u001b[0m\n\u001b[1;32m    209\u001b[0m                 \u001b[0;32melse\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    210\u001b[0m                     \u001b[0mkwargs\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mnew_arg_name\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mnew_arg_value\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 211\u001b[0;31m             \u001b[0;32mreturn\u001b[0m \u001b[0mfunc\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m*\u001b[0m\u001b[0margs\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    212\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    213\u001b[0m         \u001b[0;32mreturn\u001b[0m \u001b[0mcast\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mF\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mwrapper\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.10/dist-packages/pandas/util/_decorators.py\u001b[0m in \u001b[0;36mwrapper\u001b[0;34m(*args, **kwargs)\u001b[0m\n\u001b[1;32m    329\u001b[0m                     \u001b[0mstacklevel\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mfind_stack_level\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    330\u001b[0m                 )\n\u001b[0;32m--> 331\u001b[0;31m             \u001b[0;32mreturn\u001b[0m \u001b[0mfunc\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m*\u001b[0m\u001b[0margs\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    332\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    333\u001b[0m         \u001b[0;31m# error: \"Callable[[VarArg(Any), KwArg(Any)], Any]\" has no\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.10/dist-packages/pandas/io/parsers/readers.py\u001b[0m in \u001b[0;36mread_csv\u001b[0;34m(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, squeeze, prefix, mangle_dupe_cols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, error_bad_lines, warn_bad_lines, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options)\u001b[0m\n\u001b[1;32m    948\u001b[0m     \u001b[0mkwds\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mupdate\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mkwds_defaults\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    949\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 950\u001b[0;31m     \u001b[0;32mreturn\u001b[0m \u001b[0m_read\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mfilepath_or_buffer\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mkwds\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    951\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    952\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.10/dist-packages/pandas/io/parsers/readers.py\u001b[0m in \u001b[0;36m_read\u001b[0;34m(filepath_or_buffer, kwds)\u001b[0m\n\u001b[1;32m    603\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    604\u001b[0m     \u001b[0;31m# Create the parser.\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 605\u001b[0;31m     \u001b[0mparser\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mTextFileReader\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mfilepath_or_buffer\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m**\u001b[0m\u001b[0mkwds\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    606\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    607\u001b[0m     \u001b[0;32mif\u001b[0m \u001b[0mchunksize\u001b[0m \u001b[0;32mor\u001b[0m \u001b[0miterator\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.10/dist-packages/pandas/io/parsers/readers.py\u001b[0m in \u001b[0;36m__init__\u001b[0;34m(self, f, engine, **kwds)\u001b[0m\n\u001b[1;32m   1440\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1441\u001b[0m         \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mhandles\u001b[0m\u001b[0;34m:\u001b[0m \u001b[0mIOHandles\u001b[0m \u001b[0;34m|\u001b[0m \u001b[0;32mNone\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;32mNone\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 1442\u001b[0;31m         \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_engine\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_make_engine\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mf\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mengine\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   1443\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1444\u001b[0m     \u001b[0;32mdef\u001b[0m \u001b[0mclose\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m)\u001b[0m \u001b[0;34m->\u001b[0m \u001b[0;32mNone\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.10/dist-packages/pandas/io/parsers/readers.py\u001b[0m in \u001b[0;36m_make_engine\u001b[0;34m(self, f, engine)\u001b[0m\n\u001b[1;32m   1733\u001b[0m                 \u001b[0;32mif\u001b[0m \u001b[0;34m\"b\"\u001b[0m \u001b[0;32mnot\u001b[0m \u001b[0;32min\u001b[0m \u001b[0mmode\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1734\u001b[0m                     \u001b[0mmode\u001b[0m \u001b[0;34m+=\u001b[0m \u001b[0;34m\"b\"\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 1735\u001b[0;31m             self.handles = get_handle(\n\u001b[0m\u001b[1;32m   1736\u001b[0m                 \u001b[0mf\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1737\u001b[0m                 \u001b[0mmode\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.10/dist-packages/pandas/io/common.py\u001b[0m in \u001b[0;36mget_handle\u001b[0;34m(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)\u001b[0m\n\u001b[1;32m    854\u001b[0m         \u001b[0;32mif\u001b[0m \u001b[0mioargs\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mencoding\u001b[0m \u001b[0;32mand\u001b[0m \u001b[0;34m\"b\"\u001b[0m \u001b[0;32mnot\u001b[0m \u001b[0;32min\u001b[0m \u001b[0mioargs\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mmode\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    855\u001b[0m             \u001b[0;31m# Encoding\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 856\u001b[0;31m             handle = open(\n\u001b[0m\u001b[1;32m    857\u001b[0m                 \u001b[0mhandle\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    858\u001b[0m                 \u001b[0mioargs\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mmode\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mFileNotFoundError\u001b[0m: [Errno 2] No such file or directory: 'EDA_Data.csv'"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "diti = pd.read_csv('EDA_Data.csv')"
+      ],
+      "metadata": {
+        "id": "lqEOiB2cZKxk"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "_uuid": "c5119d1b8151029b4ff57735c4279b795ae492a2",
+        "collapsed": true,
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 800
+        },
+        "outputId": "5462d28d-e349-43d9-b3cd-96da433b59ca",
+        "id": "LY0G_dMWZM7_"
+      },
+      "cell_type": "code",
+      "source": [
+        "pd.concat([data,diti])"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "       age         workclass  fnlwgt   education  education-num  \\\n",
+              "0       39         State-gov   77516   Bachelors             13   \n",
+              "1       50  Self-emp-not-inc   83311   Bachelors             13   \n",
+              "2       38           Private  215646     HS-grad              9   \n",
+              "3       53           Private  234721        11th              7   \n",
+              "4       28           Private  338409   Bachelors             13   \n",
+              "...    ...               ...     ...         ...            ...   \n",
+              "32556   27           Private  257302  Assoc-acdm             12   \n",
+              "32557   40           Private  154374     HS-grad              9   \n",
+              "32558   58           Private  151910     HS-grad              9   \n",
+              "32559   22           Private  201490     HS-grad              9   \n",
+              "32560   52      Self-emp-inc  287927     HS-grad              9   \n",
+              "\n",
+              "           marital-status         occupation   relationship   race     sex  \\\n",
+              "0           Never-married       Adm-clerical  Not-in-family  White    Male   \n",
+              "1      Married-civ-spouse    Exec-managerial        Husband  White    Male   \n",
+              "2                Divorced  Handlers-cleaners  Not-in-family  White    Male   \n",
+              "3      Married-civ-spouse  Handlers-cleaners        Husband  Black    Male   \n",
+              "4      Married-civ-spouse     Prof-specialty           Wife  Black  Female   \n",
+              "...                   ...                ...            ...    ...     ...   \n",
+              "32556  Married-civ-spouse       Tech-support           Wife  White  Female   \n",
+              "32557  Married-civ-spouse  Machine-op-inspct        Husband  White    Male   \n",
+              "32558             Widowed       Adm-clerical      Unmarried  White  Female   \n",
+              "32559       Never-married       Adm-clerical      Own-child  White    Male   \n",
+              "32560  Married-civ-spouse    Exec-managerial           Wife  White  Female   \n",
+              "\n",
+              "       capital-gain  capital-loss  hours-per-week native-country salary  \n",
+              "0              2174             0              40  United-States  <=50K  \n",
+              "1                 0             0              13  United-States  <=50K  \n",
+              "2                 0             0              40  United-States  <=50K  \n",
+              "3                 0             0              40  United-States  <=50K  \n",
+              "4                 0             0              40           Cuba  <=50K  \n",
+              "...             ...           ...             ...            ...    ...  \n",
+              "32556             0             0              38  United-States  <=50K  \n",
+              "32557             0             0              40  United-States   >50K  \n",
+              "32558             0             0              40  United-States  <=50K  \n",
+              "32559             0             0              20  United-States  <=50K  \n",
+              "32560         15024             0              40  United-States   >50K  \n",
+              "\n",
+              "[65122 rows x 15 columns]"
+            ],
+            "text/html": [
+              "\n",
+              "\n",
+              "  <div id=\"df-e4463907-6432-4af9-9cca-fd0406c990c3\">\n",
+              "    <div class=\"colab-df-container\">\n",
+              "      <div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>age</th>\n",
+              "      <th>workclass</th>\n",
+              "      <th>fnlwgt</th>\n",
+              "      <th>education</th>\n",
+              "      <th>education-num</th>\n",
+              "      <th>marital-status</th>\n",
+              "      <th>occupation</th>\n",
+              "      <th>relationship</th>\n",
+              "      <th>race</th>\n",
+              "      <th>sex</th>\n",
+              "      <th>capital-gain</th>\n",
+              "      <th>capital-loss</th>\n",
+              "      <th>hours-per-week</th>\n",
+              "      <th>native-country</th>\n",
+              "      <th>salary</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>39</td>\n",
+              "      <td>State-gov</td>\n",
+              "      <td>77516</td>\n",
+              "      <td>Bachelors</td>\n",
+              "      <td>13</td>\n",
+              "      <td>Never-married</td>\n",
+              "      <td>Adm-clerical</td>\n",
+              "      <td>Not-in-family</td>\n",
+              "      <td>White</td>\n",
+              "      <td>Male</td>\n",
+              "      <td>2174</td>\n",
+              "      <td>0</td>\n",
+              "      <td>40</td>\n",
+              "      <td>United-States</td>\n",
+              "      <td>&lt;=50K</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>50</td>\n",
+              "      <td>Self-emp-not-inc</td>\n",
+              "      <td>83311</td>\n",
+              "      <td>Bachelors</td>\n",
+              "      <td>13</td>\n",
+              "      <td>Married-civ-spouse</td>\n",
+              "      <td>Exec-managerial</td>\n",
+              "      <td>Husband</td>\n",
+              "      <td>White</td>\n",
+              "      <td>Male</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>13</td>\n",
+              "      <td>United-States</td>\n",
+              "      <td>&lt;=50K</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>38</td>\n",
+              "      <td>Private</td>\n",
+              "      <td>215646</td>\n",
+              "      <td>HS-grad</td>\n",
+              "      <td>9</td>\n",
+              "      <td>Divorced</td>\n",
+              "      <td>Handlers-cleaners</td>\n",
+              "      <td>Not-in-family</td>\n",
+              "      <td>White</td>\n",
+              "      <td>Male</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>40</td>\n",
+              "      <td>United-States</td>\n",
+              "      <td>&lt;=50K</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>53</td>\n",
+              "      <td>Private</td>\n",
+              "      <td>234721</td>\n",
+              "      <td>11th</td>\n",
+              "      <td>7</td>\n",
+              "      <td>Married-civ-spouse</td>\n",
+              "      <td>Handlers-cleaners</td>\n",
+              "      <td>Husband</td>\n",
+              "      <td>Black</td>\n",
+              "      <td>Male</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>40</td>\n",
+              "      <td>United-States</td>\n",
+              "      <td>&lt;=50K</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>28</td>\n",
+              "      <td>Private</td>\n",
+              "      <td>338409</td>\n",
+              "      <td>Bachelors</td>\n",
+              "      <td>13</td>\n",
+              "      <td>Married-civ-spouse</td>\n",
+              "      <td>Prof-specialty</td>\n",
+              "      <td>Wife</td>\n",
+              "      <td>Black</td>\n",
+              "      <td>Female</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>40</td>\n",
+              "      <td>Cuba</td>\n",
+              "      <td>&lt;=50K</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>...</th>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>32556</th>\n",
+              "      <td>27</td>\n",
+              "      <td>Private</td>\n",
+              "      <td>257302</td>\n",
+              "      <td>Assoc-acdm</td>\n",
+              "      <td>12</td>\n",
+              "      <td>Married-civ-spouse</td>\n",
+              "      <td>Tech-support</td>\n",
+              "      <td>Wife</td>\n",
+              "      <td>White</td>\n",
+              "      <td>Female</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>38</td>\n",
+              "      <td>United-States</td>\n",
+              "      <td>&lt;=50K</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>32557</th>\n",
+              "      <td>40</td>\n",
+              "      <td>Private</td>\n",
+              "      <td>154374</td>\n",
+              "      <td>HS-grad</td>\n",
+              "      <td>9</td>\n",
+              "      <td>Married-civ-spouse</td>\n",
+              "      <td>Machine-op-inspct</td>\n",
+              "      <td>Husband</td>\n",
+              "      <td>White</td>\n",
+              "      <td>Male</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>40</td>\n",
+              "      <td>United-States</td>\n",
+              "      <td>&gt;50K</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>32558</th>\n",
+              "      <td>58</td>\n",
+              "      <td>Private</td>\n",
+              "      <td>151910</td>\n",
+              "      <td>HS-grad</td>\n",
+              "      <td>9</td>\n",
+              "      <td>Widowed</td>\n",
+              "      <td>Adm-clerical</td>\n",
+              "      <td>Unmarried</td>\n",
+              "      <td>White</td>\n",
+              "      <td>Female</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>40</td>\n",
+              "      <td>United-States</td>\n",
+              "      <td>&lt;=50K</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>32559</th>\n",
+              "      <td>22</td>\n",
+              "      <td>Private</td>\n",
+              "      <td>201490</td>\n",
+              "      <td>HS-grad</td>\n",
+              "      <td>9</td>\n",
+              "      <td>Never-married</td>\n",
+              "      <td>Adm-clerical</td>\n",
+              "      <td>Own-child</td>\n",
+              "      <td>White</td>\n",
+              "      <td>Male</td>\n",
+              "      <td>0</td>\n",
+              "      <td>0</td>\n",
+              "      <td>20</td>\n",
+              "      <td>United-States</td>\n",
+              "      <td>&lt;=50K</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>32560</th>\n",
+              "      <td>52</td>\n",
+              "      <td>Self-emp-inc</td>\n",
+              "      <td>287927</td>\n",
+              "      <td>HS-grad</td>\n",
+              "      <td>9</td>\n",
+              "      <td>Married-civ-spouse</td>\n",
+              "      <td>Exec-managerial</td>\n",
+              "      <td>Wife</td>\n",
+              "      <td>White</td>\n",
+              "      <td>Female</td>\n",
+              "      <td>15024</td>\n",
+              "      <td>0</td>\n",
+              "      <td>40</td>\n",
+              "      <td>United-States</td>\n",
+              "      <td>&gt;50K</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "<p>65122 rows × 15 columns</p>\n",
+              "</div>\n",
+              "      <button class=\"colab-df-convert\" onclick=\"convertToInteractive('df-e4463907-6432-4af9-9cca-fd0406c990c3')\"\n",
+              "              title=\"Convert this dataframe to an interactive table.\"\n",
+              "              style=\"display:none;\">\n",
+              "\n",
+              "  <svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\"viewBox=\"0 0 24 24\"\n",
+              "       width=\"24px\">\n",
+              "    <path d=\"M0 0h24v24H0V0z\" fill=\"none\"/>\n",
+              "    <path d=\"M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z\"/><path d=\"M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z\"/>\n",
+              "  </svg>\n",
+              "      </button>\n",
+              "\n",
+              "\n",
+              "\n",
+              "    <div id=\"df-3cb3a301-6ed0-4a1f-9e83-89a0bbcf6b46\">\n",
+              "      <button class=\"colab-df-quickchart\" onclick=\"quickchart('df-3cb3a301-6ed0-4a1f-9e83-89a0bbcf6b46')\"\n",
+              "              title=\"Suggest charts.\"\n",
+              "              style=\"display:none;\">\n",
+              "\n",
+              "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\"viewBox=\"0 0 24 24\"\n",
+              "     width=\"24px\">\n",
+              "    <g>\n",
+              "        <path d=\"M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z\"/>\n",
+              "    </g>\n",
+              "</svg>\n",
+              "      </button>\n",
+              "    </div>\n",
+              "\n",
+              "<style>\n",
+              "  .colab-df-quickchart {\n",
+              "    background-color: #E8F0FE;\n",
+              "    border: none;\n",
+              "    border-radius: 50%;\n",
+              "    cursor: pointer;\n",
+              "    display: none;\n",
+              "    fill: #1967D2;\n",
+              "    height: 32px;\n",
+              "    padding: 0 0 0 0;\n",
+              "    width: 32px;\n",
+              "  }\n",
+              "\n",
+              "  .colab-df-quickchart:hover {\n",
+              "    background-color: #E2EBFA;\n",
+              "    box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);\n",
+              "    fill: #174EA6;\n",
+              "  }\n",
+              "\n",
+              "  [theme=dark] .colab-df-quickchart {\n",
+              "    background-color: #3B4455;\n",
+              "    fill: #D2E3FC;\n",
+              "  }\n",
+              "\n",
+              "  [theme=dark] .colab-df-quickchart:hover {\n",
+              "    background-color: #434B5C;\n",
+              "    box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);\n",
+              "    filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));\n",
+              "    fill: #FFFFFF;\n",
+              "  }\n",
+              "</style>\n",
+              "\n",
+              "    <script>\n",
+              "      async function quickchart(key) {\n",
+              "        const containerElement = document.querySelector('#' + key);\n",
+              "        const charts = await google.colab.kernel.invokeFunction(\n",
+              "            'suggestCharts', [key], {});\n",
+              "      }\n",
+              "    </script>\n",
+              "\n",
+              "      <script>\n",
+              "\n",
+              "function displayQuickchartButton(domScope) {\n",
+              "  let quickchartButtonEl =\n",
+              "    domScope.querySelector('#df-3cb3a301-6ed0-4a1f-9e83-89a0bbcf6b46 button.colab-df-quickchart');\n",
+              "  quickchartButtonEl.style.display =\n",
+              "    google.colab.kernel.accessAllowed ? 'block' : 'none';\n",
+              "}\n",
+              "\n",
+              "        displayQuickchartButton(document);\n",
+              "      </script>\n",
+              "      <style>\n",
+              "    .colab-df-container {\n",
+              "      display:flex;\n",
+              "      flex-wrap:wrap;\n",
+              "      gap: 12px;\n",
+              "    }\n",
+              "\n",
+              "    .colab-df-convert {\n",
+              "      background-color: #E8F0FE;\n",
+              "      border: none;\n",
+              "      border-radius: 50%;\n",
+              "      cursor: pointer;\n",
+              "      display: none;\n",
+              "      fill: #1967D2;\n",
+              "      height: 32px;\n",
+              "      padding: 0 0 0 0;\n",
+              "      width: 32px;\n",
+              "    }\n",
+              "\n",
+              "    .colab-df-convert:hover {\n",
+              "      background-color: #E2EBFA;\n",
+              "      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);\n",
+              "      fill: #174EA6;\n",
+              "    }\n",
+              "\n",
+              "    [theme=dark] .colab-df-convert {\n",
+              "      background-color: #3B4455;\n",
+              "      fill: #D2E3FC;\n",
+              "    }\n",
+              "\n",
+              "    [theme=dark] .colab-df-convert:hover {\n",
+              "      background-color: #434B5C;\n",
+              "      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);\n",
+              "      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));\n",
+              "      fill: #FFFFFF;\n",
+              "    }\n",
+              "  </style>\n",
+              "\n",
+              "      <script>\n",
+              "        const buttonEl =\n",
+              "          document.querySelector('#df-e4463907-6432-4af9-9cca-fd0406c990c3 button.colab-df-convert');\n",
+              "        buttonEl.style.display =\n",
+              "          google.colab.kernel.accessAllowed ? 'block' : 'none';\n",
+              "\n",
+              "        async function convertToInteractive(key) {\n",
+              "          const element = document.querySelector('#df-e4463907-6432-4af9-9cca-fd0406c990c3');\n",
+              "          const dataTable =\n",
+              "            await google.colab.kernel.invokeFunction('convertToInteractive',\n",
+              "                                                     [key], {});\n",
+              "          if (!dataTable) return;\n",
+              "\n",
+              "          const docLinkHtml = 'Like what you see? Visit the ' +\n",
+              "            '<a target=\"_blank\" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'\n",
+              "            + ' to learn more about interactive tables.';\n",
+              "          element.innerHTML = '';\n",
+              "          dataTable['output_type'] = 'display_data';\n",
+              "          await google.colab.output.renderOutput(dataTable, element);\n",
+              "          const docLink = document.createElement('div');\n",
+              "          docLink.innerHTML = docLinkHtml;\n",
+              "          element.appendChild(docLink);\n",
+              "        }\n",
+              "      </script>\n",
+              "    </div>\n",
+              "  </div>\n"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 40
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "_uuid": "6b19853f936853d40971b56f4d298ab55ee78cac",
+        "id": "uIgPnycYU946"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "**1. How many men and women (*sex* feature) are represented in this dataset?**"
+      ]
+    },
+    {
+      "metadata": {
+        "collapsed": true,
+        "trusted": true,
+        "_uuid": "d32cafcbe966dbdfa40c3017d16d6f8c96bfb3e2",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "6RGsyXxGU94-",
+        "outputId": "4640be94-8929-4d23-c12d-46e9e55823dd"
+      },
+      "cell_type": "code",
+      "source": [
+        "data['sex'].value_counts()"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "Male      21790\n",
+              "Female    10771\n",
+              "Name: sex, dtype: int64"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 41
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "_uuid": "4748793234a5d325ea60d13331ecf93e29774523",
+        "id": "HrfyCQB9U95F"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "**2. What is the average age (*age* feature) of women?**"
+      ]
+    },
+    {
+      "metadata": {
+        "collapsed": true,
+        "trusted": true,
+        "_uuid": "64f60d928855107d8980875656dcdf3587d91646",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "pPCDcFVaU95K",
+        "outputId": "b05f2649-afab-4af3-e5aa-b9f60d30bf7c"
+      },
+      "cell_type": "code",
+      "source": [
+        "data.loc[data['sex'] == 'Female', 'age'].mean()"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "36.85823043357163"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 31
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "_uuid": "80e87c421c348067e88769c64e554206c51727d1",
+        "id": "1d8NSZwuU95Q"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "**3. What is the percentage of German citizens (*native-country* feature)?**"
+      ]
+    },
+    {
+      "metadata": {
+        "collapsed": true,
+        "trusted": true,
+        "_uuid": "ca9807509692638bd945671ed7d8b4a5ad1f3626",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "_LXHHBApU95U",
+        "outputId": "c43f180c-d218-4513-dba7-91a58ce6ba62"
+      },
+      "cell_type": "code",
+      "source": [
+        "float((data['native-country'] == 'Germany').sum()) / data.shape[0]"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "0.004207487485028101"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 30
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "_uuid": "be9911cf525df4fca2c1d14b8720bc8a82f462e7",
+        "id": "4o6-GY5BU95W"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "**4-5. What are the mean and standard deviation of age for those who earn more than 50K per year (*salary* feature) and those who earn less than 50K per year? **"
+      ]
+    },
+    {
+      "metadata": {
+        "collapsed": true,
+        "trusted": true,
+        "_uuid": "97948f0115f949913d211627151b5605bcd204fd",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "F5aHIE66U95X",
+        "outputId": "6c285cb3-e699-49d4-b06e-306c838a7c6e"
+      },
+      "cell_type": "code",
+      "source": [
+        "ages1 = data.loc[data['salary'] == '>50K', 'age']\n",
+        "ages2 = data.loc[data['salary'] == '<=50K', 'age']\n",
+        "print(\"The average age of the rich: {0} +- {1} years, poor - {2} +- {3} years.\".format(\n",
+        "    round(ages1.mean()), round(ages1.std(), 1),\n",
+        "    round(ages2.mean()), round(ages2.std(), 1)))"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "The average age of the rich: 44 +- 10.5 years, poor - 37 +- 14.0 years.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "_uuid": "180c3fe6f8b250b877c1d86866067b80acabdb64",
+        "id": "Uu3obHyvU95Y"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "**6. Is it true that people who earn more than 50K have at least high school education? (*education – Bachelors, Prof-school, Assoc-acdm, Assoc-voc, Masters* or *Doctorate* feature)**"
+      ]
+    },
+    {
+      "metadata": {
+        "collapsed": true,
+        "trusted": true,
+        "_uuid": "58f38ebfa2b0e1418a6a1a680d0743697f9876a2",
+        "id": "MDghxT1mU95Y"
+      },
+      "cell_type": "code",
+      "source": [
+        "data.loc[data['salary'] == '>50K', 'education'].unique() # No"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "_uuid": "87d6bc9ec1c230e66416ce94533ea250368009cc",
+        "id": "WI6bnkrsU95Z"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "**7. Display age statistics for each race (*race* feature) and each gender (*sex* feature). Use *groupby()* and *describe()*. Find the maximum age of men of *Amer-Indian-Eskimo* race.**"
+      ]
+    },
+    {
+      "metadata": {
+        "collapsed": true,
+        "trusted": true,
+        "_uuid": "a4567b72200b583f7f2ee1583405d636c12169db",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 438
+        },
+        "id": "8Dhuju_mU95a",
+        "outputId": "e232c44f-022b-431d-94a8-6be445f18067"
+      },
+      "cell_type": "code",
+      "source": [
+        "data.groupby(['race','sex'])['age'].describe()"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "                             count       mean        std   min   25%   50%  \\\n",
+              "race               sex                                                       \n",
+              "Amer-Indian-Eskimo Female    119.0  37.117647  13.114991  17.0  27.0  36.0   \n",
+              "                   Male      192.0  37.208333  12.049563  17.0  28.0  35.0   \n",
+              "Asian-Pac-Islander Female    346.0  35.089595  12.300845  17.0  25.0  33.0   \n",
+              "                   Male      693.0  39.073593  12.883944  18.0  29.0  37.0   \n",
+              "Black              Female   1555.0  37.854019  12.637197  17.0  28.0  37.0   \n",
+              "                   Male     1569.0  37.682600  12.882612  17.0  27.0  36.0   \n",
+              "Other              Female    109.0  31.678899  11.631599  17.0  23.0  29.0   \n",
+              "                   Male      162.0  34.654321  11.355531  17.0  26.0  32.0   \n",
+              "White              Female   8642.0  36.811618  14.329093  17.0  25.0  35.0   \n",
+              "                   Male    19174.0  39.652498  13.436029  17.0  29.0  38.0   \n",
+              "\n",
+              "                             75%   max  \n",
+              "race               sex                  \n",
+              "Amer-Indian-Eskimo Female  46.00  80.0  \n",
+              "                   Male    45.00  82.0  \n",
+              "Asian-Pac-Islander Female  43.75  75.0  \n",
+              "                   Male    46.00  90.0  \n",
+              "Black              Female  46.00  90.0  \n",
+              "                   Male    46.00  90.0  \n",
+              "Other              Female  39.00  74.0  \n",
+              "                   Male    42.00  77.0  \n",
+              "White              Female  46.00  90.0  \n",
+              "                   Male    49.00  90.0  "
+            ],
+            "text/html": [
+              "\n",
+              "\n",
+              "  <div id=\"df-fa046760-e706-4d4d-8478-a554f4dd1fd6\">\n",
+              "    <div class=\"colab-df-container\">\n",
+              "      <div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th>count</th>\n",
+              "      <th>mean</th>\n",
+              "      <th>std</th>\n",
+              "      <th>min</th>\n",
+              "      <th>25%</th>\n",
+              "      <th>50%</th>\n",
+              "      <th>75%</th>\n",
+              "      <th>max</th>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>race</th>\n",
+              "      <th>sex</th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "      <th></th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th rowspan=\"2\" valign=\"top\">Amer-Indian-Eskimo</th>\n",
+              "      <th>Female</th>\n",
+              "      <td>119.0</td>\n",
+              "      <td>37.117647</td>\n",
+              "      <td>13.114991</td>\n",
+              "      <td>17.0</td>\n",
+              "      <td>27.0</td>\n",
+              "      <td>36.0</td>\n",
+              "      <td>46.00</td>\n",
+              "      <td>80.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Male</th>\n",
+              "      <td>192.0</td>\n",
+              "      <td>37.208333</td>\n",
+              "      <td>12.049563</td>\n",
+              "      <td>17.0</td>\n",
+              "      <td>28.0</td>\n",
+              "      <td>35.0</td>\n",
+              "      <td>45.00</td>\n",
+              "      <td>82.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th rowspan=\"2\" valign=\"top\">Asian-Pac-Islander</th>\n",
+              "      <th>Female</th>\n",
+              "      <td>346.0</td>\n",
+              "      <td>35.089595</td>\n",
+              "      <td>12.300845</td>\n",
+              "      <td>17.0</td>\n",
+              "      <td>25.0</td>\n",
+              "      <td>33.0</td>\n",
+              "      <td>43.75</td>\n",
+              "      <td>75.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Male</th>\n",
+              "      <td>693.0</td>\n",
+              "      <td>39.073593</td>\n",
+              "      <td>12.883944</td>\n",
+              "      <td>18.0</td>\n",
+              "      <td>29.0</td>\n",
+              "      <td>37.0</td>\n",
+              "      <td>46.00</td>\n",
+              "      <td>90.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th rowspan=\"2\" valign=\"top\">Black</th>\n",
+              "      <th>Female</th>\n",
+              "      <td>1555.0</td>\n",
+              "      <td>37.854019</td>\n",
+              "      <td>12.637197</td>\n",
+              "      <td>17.0</td>\n",
+              "      <td>28.0</td>\n",
+              "      <td>37.0</td>\n",
+              "      <td>46.00</td>\n",
+              "      <td>90.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Male</th>\n",
+              "      <td>1569.0</td>\n",
+              "      <td>37.682600</td>\n",
+              "      <td>12.882612</td>\n",
+              "      <td>17.0</td>\n",
+              "      <td>27.0</td>\n",
+              "      <td>36.0</td>\n",
+              "      <td>46.00</td>\n",
+              "      <td>90.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th rowspan=\"2\" valign=\"top\">Other</th>\n",
+              "      <th>Female</th>\n",
+              "      <td>109.0</td>\n",
+              "      <td>31.678899</td>\n",
+              "      <td>11.631599</td>\n",
+              "      <td>17.0</td>\n",
+              "      <td>23.0</td>\n",
+              "      <td>29.0</td>\n",
+              "      <td>39.00</td>\n",
+              "      <td>74.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Male</th>\n",
+              "      <td>162.0</td>\n",
+              "      <td>34.654321</td>\n",
+              "      <td>11.355531</td>\n",
+              "      <td>17.0</td>\n",
+              "      <td>26.0</td>\n",
+              "      <td>32.0</td>\n",
+              "      <td>42.00</td>\n",
+              "      <td>77.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th rowspan=\"2\" valign=\"top\">White</th>\n",
+              "      <th>Female</th>\n",
+              "      <td>8642.0</td>\n",
+              "      <td>36.811618</td>\n",
+              "      <td>14.329093</td>\n",
+              "      <td>17.0</td>\n",
+              "      <td>25.0</td>\n",
+              "      <td>35.0</td>\n",
+              "      <td>46.00</td>\n",
+              "      <td>90.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>Male</th>\n",
+              "      <td>19174.0</td>\n",
+              "      <td>39.652498</td>\n",
+              "      <td>13.436029</td>\n",
+              "      <td>17.0</td>\n",
+              "      <td>29.0</td>\n",
+              "      <td>38.0</td>\n",
+              "      <td>49.00</td>\n",
+              "      <td>90.0</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>\n",
+              "      <button class=\"colab-df-convert\" onclick=\"convertToInteractive('df-fa046760-e706-4d4d-8478-a554f4dd1fd6')\"\n",
+              "              title=\"Convert this dataframe to an interactive table.\"\n",
+              "              style=\"display:none;\">\n",
+              "\n",
+              "  <svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\"viewBox=\"0 0 24 24\"\n",
+              "       width=\"24px\">\n",
+              "    <path d=\"M0 0h24v24H0V0z\" fill=\"none\"/>\n",
+              "    <path d=\"M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z\"/><path d=\"M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z\"/>\n",
+              "  </svg>\n",
+              "      </button>\n",
+              "\n",
+              "\n",
+              "\n",
+              "    <div id=\"df-6ef8fe8f-1050-41e3-bd61-818ea514c8c0\">\n",
+              "      <button class=\"colab-df-quickchart\" onclick=\"quickchart('df-6ef8fe8f-1050-41e3-bd61-818ea514c8c0')\"\n",
+              "              title=\"Suggest charts.\"\n",
+              "              style=\"display:none;\">\n",
+              "\n",
+              "<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\"viewBox=\"0 0 24 24\"\n",
+              "     width=\"24px\">\n",
+              "    <g>\n",
+              "        <path d=\"M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z\"/>\n",
+              "    </g>\n",
+              "</svg>\n",
+              "      </button>\n",
+              "    </div>\n",
+              "\n",
+              "<style>\n",
+              "  .colab-df-quickchart {\n",
+              "    background-color: #E8F0FE;\n",
+              "    border: none;\n",
+              "    border-radius: 50%;\n",
+              "    cursor: pointer;\n",
+              "    display: none;\n",
+              "    fill: #1967D2;\n",
+              "    height: 32px;\n",
+              "    padding: 0 0 0 0;\n",
+              "    width: 32px;\n",
+              "  }\n",
+              "\n",
+              "  .colab-df-quickchart:hover {\n",
+              "    background-color: #E2EBFA;\n",
+              "    box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);\n",
+              "    fill: #174EA6;\n",
+              "  }\n",
+              "\n",
+              "  [theme=dark] .colab-df-quickchart {\n",
+              "    background-color: #3B4455;\n",
+              "    fill: #D2E3FC;\n",
+              "  }\n",
+              "\n",
+              "  [theme=dark] .colab-df-quickchart:hover {\n",
+              "    background-color: #434B5C;\n",
+              "    box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);\n",
+              "    filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));\n",
+              "    fill: #FFFFFF;\n",
+              "  }\n",
+              "</style>\n",
+              "\n",
+              "    <script>\n",
+              "      async function quickchart(key) {\n",
+              "        const containerElement = document.querySelector('#' + key);\n",
+              "        const charts = await google.colab.kernel.invokeFunction(\n",
+              "            'suggestCharts', [key], {});\n",
+              "      }\n",
+              "    </script>\n",
+              "\n",
+              "      <script>\n",
+              "\n",
+              "function displayQuickchartButton(domScope) {\n",
+              "  let quickchartButtonEl =\n",
+              "    domScope.querySelector('#df-6ef8fe8f-1050-41e3-bd61-818ea514c8c0 button.colab-df-quickchart');\n",
+              "  quickchartButtonEl.style.display =\n",
+              "    google.colab.kernel.accessAllowed ? 'block' : 'none';\n",
+              "}\n",
+              "\n",
+              "        displayQuickchartButton(document);\n",
+              "      </script>\n",
+              "      <style>\n",
+              "    .colab-df-container {\n",
+              "      display:flex;\n",
+              "      flex-wrap:wrap;\n",
+              "      gap: 12px;\n",
+              "    }\n",
+              "\n",
+              "    .colab-df-convert {\n",
+              "      background-color: #E8F0FE;\n",
+              "      border: none;\n",
+              "      border-radius: 50%;\n",
+              "      cursor: pointer;\n",
+              "      display: none;\n",
+              "      fill: #1967D2;\n",
+              "      height: 32px;\n",
+              "      padding: 0 0 0 0;\n",
+              "      width: 32px;\n",
+              "    }\n",
+              "\n",
+              "    .colab-df-convert:hover {\n",
+              "      background-color: #E2EBFA;\n",
+              "      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);\n",
+              "      fill: #174EA6;\n",
+              "    }\n",
+              "\n",
+              "    [theme=dark] .colab-df-convert {\n",
+              "      background-color: #3B4455;\n",
+              "      fill: #D2E3FC;\n",
+              "    }\n",
+              "\n",
+              "    [theme=dark] .colab-df-convert:hover {\n",
+              "      background-color: #434B5C;\n",
+              "      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);\n",
+              "      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));\n",
+              "      fill: #FFFFFF;\n",
+              "    }\n",
+              "  </style>\n",
+              "\n",
+              "      <script>\n",
+              "        const buttonEl =\n",
+              "          document.querySelector('#df-fa046760-e706-4d4d-8478-a554f4dd1fd6 button.colab-df-convert');\n",
+              "        buttonEl.style.display =\n",
+              "          google.colab.kernel.accessAllowed ? 'block' : 'none';\n",
+              "\n",
+              "        async function convertToInteractive(key) {\n",
+              "          const element = document.querySelector('#df-fa046760-e706-4d4d-8478-a554f4dd1fd6');\n",
+              "          const dataTable =\n",
+              "            await google.colab.kernel.invokeFunction('convertToInteractive',\n",
+              "                                                     [key], {});\n",
+              "          if (!dataTable) return;\n",
+              "\n",
+              "          const docLinkHtml = 'Like what you see? Visit the ' +\n",
+              "            '<a target=\"_blank\" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'\n",
+              "            + ' to learn more about interactive tables.';\n",
+              "          element.innerHTML = '';\n",
+              "          dataTable['output_type'] = 'display_data';\n",
+              "          await google.colab.output.renderOutput(dataTable, element);\n",
+              "          const docLink = document.createElement('div');\n",
+              "          docLink.innerHTML = docLinkHtml;\n",
+              "          element.appendChild(docLink);\n",
+              "        }\n",
+              "      </script>\n",
+              "    </div>\n",
+              "  </div>\n"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 44
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "_uuid": "19411d604b0d4337a4a048a2f0e898541f39ab76",
+        "id": "YMsCyVIpU95g"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "**8. Among whom is the proportion of those who earn a lot (>50K) greater: married or single men (*marital-status* feature)? Consider as married those who have a *marital-status* starting with *Married* (Married-civ-spouse, Married-spouse-absent or Married-AF-spouse), the rest are considered bachelors.**"
+      ]
+    },
+    {
+      "metadata": {
+        "collapsed": true,
+        "trusted": true,
+        "_uuid": "5bb3a8524fcbd794707075ccf6aaf8dd0f30a3dd",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "c4_22CsDU95k",
+        "outputId": "02f08290-0c33-435c-bf0c-0b7ea32daa31"
+      },
+      "cell_type": "code",
+      "source": [
+        "data.loc[(data['sex'] == 'Male') &\n",
+        "     (data['marital-status'].isin(['Never-married',\n",
+        "                                   'Separated',\n",
+        "                                   'Divorced',\n",
+        "                                   'Widowed'])), 'salary'].value_counts()"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<=50K    7552\n",
+              ">50K      697\n",
+              "Name: salary, dtype: int64"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 33
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "data.loc[(data['sex'] == 'Male') &\n",
+        "     (data['marital-status'].str.startswith('Married')), 'salary'].value_counts()"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "nGAMlj6lmNzB",
+        "outputId": "b2f7815a-7cf1-439a-9c38-89877ff08538"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<=50K    7576\n",
+              ">50K     5965\n",
+              "Name: salary, dtype: int64"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 34
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "data['marital-status'].value_counts()"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "SqTmamTzmRZg",
+        "outputId": "db3c3105-5681-4b15-a436-55d3fe6ba3c0"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "Married-civ-spouse       14976\n",
+              "Never-married            10683\n",
+              "Divorced                  4443\n",
+              "Separated                 1025\n",
+              "Widowed                    993\n",
+              "Married-spouse-absent      418\n",
+              "Married-AF-spouse           23\n",
+              "Name: marital-status, dtype: int64"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 35
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "_uuid": "34f2076e7d331b95a23b990372809b709d2c8183",
+        "id": "1p9BKF-lU95l"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "**9. What is the maximum number of hours a person works per week (*hours-per-week* feature)? How many people work such a number of hours, and what is the percentage of those who earn a lot (>50K) among them?**"
+      ]
+    },
+    {
+      "metadata": {
+        "collapsed": true,
+        "trusted": true,
+        "_uuid": "3571468172fc4bcf34e10b3d6ab358d4e41f7ef4",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "76MJfLsKU95m",
+        "outputId": "83aa6ff8-d1ae-42fa-fed3-e500f1e3ce60"
+      },
+      "cell_type": "code",
+      "source": [
+        "max_load = data['hours-per-week'].max()\n",
+        "print(\"Max time - {0} hours./week.\".format(max_load))"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Max time - 99 hours./week.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "_uuid": "d539d4d137fac1c5ea25bc516188eb657d67e9b4",
+        "id": "WDdtuKYwU95n"
+      },
+      "cell_type": "markdown",
+      "source": [
+        "**10. Count the average time of work (*hours-per-week*) for those who earn a little and a lot (*salary*) for each country (*native-country*). What will these be for Japan?**"
+      ]
+    },
+    {
+      "metadata": {
+        "collapsed": true,
+        "trusted": false,
+        "_uuid": "75a93411f1e3b519afcc27c026aaa0c67eb526e9",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 194
+        },
+        "id": "SWUhKQJqU95o",
+        "outputId": "1eb89350-0f81-4d53-9313-a2965c7946bb"
+      },
+      "cell_type": "code",
+      "source": [
+        "for (country, salary), sub_df in data.groupby(['native-country', 'salary']):\n",
+        "    print(country, salary, round(sub_df['hours-per-week'].mean(), 2))"
+      ],
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "NameError",
+          "evalue": "ignored",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-11-a13bf37744db>\u001b[0m in \u001b[0;36m<cell line: 1>\u001b[0;34m()\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0;32mfor\u001b[0m \u001b[0;34m(\u001b[0m\u001b[0mcountry\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0msalary\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0msub_df\u001b[0m \u001b[0;32min\u001b[0m \u001b[0mdata\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mgroupby\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;34m'native-country'\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m'salary'\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      2\u001b[0m     \u001b[0mprint\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mcountry\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0msalary\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mround\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0msub_df\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;34m'hours-per-week'\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mmean\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m2\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mNameError\u001b[0m: name 'data' is not defined"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "anaconda-cloud": {},
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python",
+      "version": "3.6.6",
+      "mimetype": "text/x-python",
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "pygments_lexer": "ipython3",
+      "nbconvert_exporter": "python",
+      "file_extension": ".py"
+    },
+    "colab": {
+      "provenance": [],
+      "include_colab_link": true
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
